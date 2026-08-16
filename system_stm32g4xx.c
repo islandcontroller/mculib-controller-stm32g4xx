@@ -109,10 +109,11 @@ static uint32_t ulCalcPllBaseClk(void)
       __builtin_unreachable();
   }
 
-  // Apply prediv and multiplier
-  uint32_t ulMul = (ulPllCfgR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
-  uint32_t ulDiv = 1uL + ((ulPllCfgR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos);
-  return (ulInputClk * ulMul) / ulDiv;
+  // Apply input pre-divider, multiplier and post-division factor
+  uint32_t ulPre =  1uL + ((ulPllCfgR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos);
+  uint32_t ulMul =         (ulPllCfgR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos;
+  uint32_t ulDiv = (1uL + ((ulPllCfgR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos)) << 1;
+  return ((ulInputClk * ulMul) / ulPre) / ulDiv;
 }
 
 
